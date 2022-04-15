@@ -1,0 +1,14 @@
+import axios from "axios";
+
+const instance = axios.create({
+  baseURL: "https://api.formaloo.net/v3.1/",
+  timeout: 10000,
+  headers: {
+    "x-api-key":
+      "key_gAAAAABiWXF3y-o2tnoOtRWolN735_oCWV7whEL918Et8qcmiuJun6pPqqMuTdixEsCUAZ7eVQp9Y6ug_YswL85uPdSS_KT7_Rgv-GBoMYRUJ4WknRCMqVXWCvceHBtBTdAvSNSF0eoZidIpci-jl4AvRY_WufKiEQ==",
+    Authorization:
+      "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im15YXBwLTAwMSJ9.eyJ0b2tlbiI6ImF1dGgiLCJzaWQiOiI5NTQ0Y2Y4NC02OWFiLTQ4NDAtOGUyNC1hNGNiNmRkYjM5NjUiLCJ1aWQiOjIxNjk2NiwiZW1haWwiOiJwb3VyaWFtb2xhZWk5NUBnbWFpbC5jb20iLCJmaXJzdF9uYW1lIjoiUG91cmlhIiwibGFzdF9uYW1lIjoiTW9sYWVpIiwicGhvbmVfbnVtYmVyIjpudWxsLCJ1c2VybmFtZSI6IjhmZjRhZTZmZDJkZDRiZWU4OTAxOTQwODQ1MjczOSIsInZlcmlmaWVkX2VtYWlsIjpmYWxzZSwidmVyaWZpZWRfcGhvbmUiOmZhbHNlLCJsYXN0X3VwZGF0ZSI6IjIwMjItMDQtMDlUMDI6MDA6MDIuNTMyWiIsImdyb3VwcyI6IiIsImlzcyI6ImljYXMiLCJhdWQiOlsiaWNhcyIsImNybSIsImZvcm16IiwiaW52b2ljZSIsInByb2plY3RhbnQiLCJhY3Rpb25zIl0sImV4cCI6MTY1MjYyMDcwMywiaWF0IjoxNjUwMDI4NzAzfQ.BEZ3Vc6MRnshP5XVFQM1uQZLucvHU76Pd3CkZon1lqvbxS5SYhnIPIiW5kNarDRXJVtSdmRMrJC7NktsVBSn_7219jBfKLA4ZxgHrj2Iun-wlxRBV3NyVt0fEqCIovGQekqAkJ76kK9B9DwSiHUI2VjIxUWT4f6y85r7_qLBYSI",
+  },
+});
+
+export default instance;
