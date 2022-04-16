@@ -1,15 +1,19 @@
-import axios from "axios";
+import http from "./axios";
 import * as fns from "../constants/api";
 import * as models from "../models/entities";
 
 export const createForm = () => {
-  return axios.post(fns.CREATE_FORM);
+  return http.post(fns.FORM);
 };
 
 export const createField = (data: models.TextField) => {
-  return axios.post(fns.CREATE_FIELD, data);
+  return http.post(fns.FIELD, data);
+};
+
+export const updateField = (data: models.TextField, slug: string) => {
+  return http.patch(`${fns.FIELD}${slug}`, data);
 };
 
 export const updateForm = (data: models.Form, slug: string) => {
-  return axios.patch(`${fns.CREATE_FORM}${slug}`, data);
+  return http.patch(`${fns.FORM}${slug}`, data);
 };

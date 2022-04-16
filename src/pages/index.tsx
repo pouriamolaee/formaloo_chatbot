@@ -2,50 +2,24 @@ import { useEffect, useRef } from "react";
 import { ConversationalForm } from "conversational-form";
 import * as contents from "../constants/contents";
 import * as services from "../api/services";
-import * as models from "../models/entities";
 import * as inputs from "../constants/inputs";
-
-const starterTag = {
-  tag: "fieldset",
-  "cf-questions": contents.START,
-  children: [
-    {
-      tag: "input",
-      type: "radio",
-      name: inputs.START,
-      "cf-label": contents.FORM_CREATE,
-      value: true,
-    },
-    {
-      tag: "input",
-      type: "radio",
-      name: inputs.START,
-      "cf-label": contents.DATE_COMMAND,
-      value: false,
-    },
-  ],
-};
-
-const formFields = [
+import * as models from "../models/entities";
+import * as enums from "../models/enums";
+import * as utils from "../utils/text";
+import {
   starterTag,
-  {
-    tag: "input",
-    type: "text",
-    "cf-questions": contents.FIELD_TITLE,
-    name: inputs.FIELD_TITLE,
-  },
+  fieldTitleTag,
+  requiredTag,
+  moreFieldsTag,
+  formTitleTag,
+} from "../data/tags";
 
-  {
-    tag: "input",
-    type: "text",
-    "cf-questions": contents.FORM_TITLE,
-    name: inputs.FORM_TITLE,
-  },
-];
+const tags = [starterTag, fieldTitleTag, formTitleTag];
 
 let cf: any;
 const ConversationalFormComponent = () => {
   const createdFormSlug = useRef("");
+  const createdFieldSlug = useRef("");
 
   const elem = useRef<HTMLDivElement>(null);
 
@@ -57,7 +31,7 @@ const ConversationalFormComponent = () => {
         preventAutoFocus: true,
         loadExternalStyleSheet: true,
       },
-      tags: formFields,
+      tags,
     });
     elem.current!.appendChild(cf.el);
   }, []);
@@ -65,7 +39,7 @@ const ConversationalFormComponent = () => {
   const flowStepCallback = async (dto: any, success: any, error: any) => {
     switch (dto.tag.name) {
       case inputs.START:
-        if (dto.tag.value[0] === "true") {
+        if (+dto.tag.value[0] === enums.StartCommand.CreateForm) {
           const { slug } = (await services.createForm()).data.data.form;
           createdFormSlug.current = slug;
         } else {
@@ -83,54 +57,56 @@ const ConversationalFormComponent = () => {
         break;
 
       case inputs.FIELD_TITLE:
+        const { value } = dto.tag;
+        if (!value) {
+          cf.addRobotChatResponse(contents.VALIDATION);
+          cf.addTags([fieldTitleTag]);
+          break;
+        }
+
         const fieldData: models.TextField = {
           form: createdFormSlug.current,
           type: "short_text",
-          title: dto.tag.value,
-          // required: true,
-          // description: ""
+          title: value,
         };
-        await services.createField(fieldData);
+        const { slug: fieldSlug } = (await services.createField(fieldData)).data
+          .data.field;
+        createdFieldSlug.current = fieldSlug;
 
-        cf.addTags([
-          {
-            tag: "fieldset",
-            "cf-questions": contents.MORE_FIELDS,
-            children: [
-              {
-                tag: "input",
-                type: "radio",
-                name: inputs.MORE_FIELDS,
-                "cf-label": contents.YUP,
-                value: true,
-              },
-              {
-                tag: "input",
-                type: "radio",
-                name: inputs.MORE_FIELDS,
-                "cf-label": contents.NOPE,
-                value: false,
-              },
-            ],
-          },
-        ]);
+        cf.addTags([requiredTag]);
+        break;
+
+      case inputs.REQUIRED:
+        if (+dto.tag.value[0] === enums.Required.Yeah) {
+          const updatedFieldData: models.TextField = {
+            form: createdFormSlug.current,
+            type: "short_text",
+            required: true,
+          };
+          await services.updateField(
+            updatedFieldData,
+            createdFieldSlug.current
+          );
+        }
+
+        cf.addTags([moreFieldsTag]);
         break;
 
       case inputs.MORE_FIELDS:
-        if (dto.tag.value[0] === "true") {
-          cf.addTags([
-            {
-              tag: "input",
-              type: "text",
-              "cf-questions": contents.FIELD_TITLE,
-              name: inputs.FIELD_TITLE,
-            },
-          ]);
+        if (+dto.tag.value[0] === enums.MoreFields.Yup) {
+          cf.addTags([fieldTitleTag]);
         }
         break;
 
       case inputs.FORM_TITLE:
-        const formData = { title: dto.tag.value };
+        const { value: formTitleValue } = dto.tag;
+        if (!formTitleValue) {
+          cf.addRobotChatResponse(contents.VALIDATION);
+          cf.addTags([formTitleTag]);
+          break;
+        }
+
+        const formData = { title: formTitleValue };
         const { subdomain, address } = (
           await services.updateForm(formData, createdFormSlug.current)
         ).data.data.form;
@@ -141,7 +117,7 @@ const ConversationalFormComponent = () => {
         const formLink = `<a target="_blank" href="${formUrl}">${formUrl}</a>`;
 
         cf.addRobotChatResponse(formLink);
-        
+
         cf.addTags([starterTag]);
         break;
     }

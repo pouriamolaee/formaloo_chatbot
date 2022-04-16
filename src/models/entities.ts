@@ -1,7 +1,7 @@
 export interface TextField {
   form: string;
   type: "short_text";
-  title: string;
+  title?: string;
   description?: string;
   required?: boolean;
 }
