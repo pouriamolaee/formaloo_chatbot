@@ -1,4 +1,4 @@
-import axios from "../api/axios";
+import axios from "axios";
 import * as fns from "../constants/api";
 import * as models from "../models/entities";
 

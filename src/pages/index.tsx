@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { ConversationalForm } from "conversational-form";
 import * as contents from "../constants/contents";
-import * as service from "../api/service";
+import * as services from "../api/services";
 import * as models from "../models/entities";
-import * as inputs from "../constants/input";
+import * as inputs from "../constants/inputs";
 
 const starterTag = {
   tag: "fieldset",
@@ -52,6 +52,7 @@ const ConversationalFormComponent = () => {
   useEffect(() => {
     cf = ConversationalForm.startTheConversation({
       options: {
+        theme: "dark",
         flowStepCallback,
         preventAutoFocus: true,
         loadExternalStyleSheet: true,
@@ -65,7 +66,7 @@ const ConversationalFormComponent = () => {
     switch (dto.tag.name) {
       case inputs.START:
         if (dto.tag.value[0] === "true") {
-          const { slug } = (await service.createForm()).data.data.form;
+          const { slug } = (await services.createForm()).data.data.form;
           createdFormSlug.current = slug;
         } else {
           cf.addRobotChatResponse(
@@ -89,7 +90,7 @@ const ConversationalFormComponent = () => {
           // required: true,
           // description: ""
         };
-        await service.createField(fieldData);
+        await services.createField(fieldData);
 
         cf.addTags([
           {
@@ -131,28 +132,24 @@ const ConversationalFormComponent = () => {
       case inputs.FORM_TITLE:
         const formData = { title: dto.tag.value };
         const { subdomain, address } = (
-          await service.updateForm(formData, createdFormSlug.current)
+          await services.updateForm(formData, createdFormSlug.current)
         ).data.data.form;
 
         cf.addRobotChatResponse(contents.CONGRATS);
 
         const formUrl = `https://${subdomain}.formaloo.net/${address}`;
         const formLink = `<a target="_blank" href="${formUrl}">${formUrl}</a>`;
+
         cf.addRobotChatResponse(formLink);
-
+        
         cf.addTags([starterTag]);
-
         break;
     }
 
     success();
   };
 
-  return (
-    <div>
-      <div ref={elem} />
-    </div>
-  );
+  return <div ref={elem} />;
 };
 
 export default ConversationalFormComponent;
