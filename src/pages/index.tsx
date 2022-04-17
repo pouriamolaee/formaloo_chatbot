@@ -5,7 +5,6 @@ import * as services from "../api/services";
 import * as inputs from "../constants/inputs";
 import * as models from "../models/entities";
 import * as enums from "../models/enums";
-import * as utils from "../utils/text";
 import {
   starterTag,
   fieldTitleTag,
@@ -110,7 +109,7 @@ const ConversationalFormComponent = () => {
           cf.addTags([descriptionTag]);
           break;
         }
-        
+
         const updatedFieldData: models.TextField = {
           form: createdFormSlug.current,
           type: "short_text",
