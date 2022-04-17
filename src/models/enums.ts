@@ -12,3 +12,8 @@ export enum Required {
   Yeah,
   Nah,
 }
+
+export enum HasDescription {
+  Yes,
+  No,
+}

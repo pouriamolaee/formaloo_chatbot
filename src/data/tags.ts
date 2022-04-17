@@ -51,6 +51,34 @@ export const requiredTag = {
   ],
 };
 
+export const hasDescriptionTag = {
+  tag: "fieldset",
+  "cf-questions": contents.HAS_DESCRIPTION,
+  children: [
+    {
+      tag: "input",
+      type: "radio",
+      name: inputs.HAS_DESCRIPTION,
+      "cf-label": contents.YES,
+      value: enums.HasDescription.Yes,
+    },
+    {
+      tag: "input",
+      type: "radio",
+      name: inputs.HAS_DESCRIPTION,
+      "cf-label": contents.NO,
+      value: enums.HasDescription.No,
+    },
+  ],
+};
+
+export const descriptionTag = {
+  tag: "input",
+  type: "text",
+  "cf-questions": contents.DESCRIPTION,
+  name: inputs.DESCRIPTION,
+};
+
 export const moreFieldsTag = {
   tag: "fieldset",
   "cf-questions": contents.MORE_FIELDS,

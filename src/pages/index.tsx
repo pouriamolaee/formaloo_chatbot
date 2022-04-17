@@ -10,6 +10,8 @@ import {
   starterTag,
   fieldTitleTag,
   requiredTag,
+  hasDescriptionTag,
+  descriptionTag,
   moreFieldsTag,
   formTitleTag,
 } from "../data/tags";
@@ -88,6 +90,33 @@ const ConversationalFormComponent = () => {
             createdFieldSlug.current
           );
         }
+
+        cf.addTags([hasDescriptionTag]);
+        break;
+
+      case inputs.HAS_DESCRIPTION:
+        if (+dto.tag.value[0] === enums.HasDescription.Yes) {
+          cf.addTags([descriptionTag]);
+          break;
+        }
+
+        cf.addTags([moreFieldsTag]);
+        break;
+
+      case inputs.DESCRIPTION:
+        const { value: description } = dto.tag;
+        if (!description) {
+          cf.addRobotChatResponse(contents.VALIDATION);
+          cf.addTags([descriptionTag]);
+          break;
+        }
+        
+        const updatedFieldData: models.TextField = {
+          form: createdFormSlug.current,
+          type: "short_text",
+          description,
+        };
+        await services.updateField(updatedFieldData, createdFieldSlug.current);
 
         cf.addTags([moreFieldsTag]);
         break;
